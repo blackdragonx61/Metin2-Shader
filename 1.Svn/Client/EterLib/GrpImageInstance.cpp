@@ -12,7 +12,7 @@
 ///Change
 #if defined(__BL_SHADER__)
 		IShader* shader = CShaderManager::Instance().GetShader(IShader::EType::INVERT);
-		if (shader && shader->IsVisible() && shader->GetRenderType() == IShader::ERenderType::GRP_IMAGE)
+		if (shader && shader->IsVisible())
 		{
 			shader->ApplySettings(pTexture->GetD3DTexture());
 			shader->Render([] {

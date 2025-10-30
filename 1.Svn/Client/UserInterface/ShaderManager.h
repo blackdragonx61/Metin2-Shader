@@ -27,8 +27,8 @@ public:
 	{
 		GAME_SCREEN,
 		ATLAS,
-		GRP_IMAGE,
 		UI,
+		OTHER,
 	};
 
 	explicit IShader();
@@ -112,7 +112,7 @@ public:
 
 	void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const override;
 	EType GetType() const override { return EType::INVERT; }
-	ERenderType GetRenderType() const override { return ERenderType::GRP_IMAGE; }
+	ERenderType GetRenderType() const override { return ERenderType::OTHER; }
 };
 
 class CAtlasSpotlightShader : public IShader
