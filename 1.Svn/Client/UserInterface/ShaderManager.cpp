@@ -358,6 +358,7 @@ void initshadermgr()
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_INVERT",				(long)IShader::EType::INVERT);
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_ATLAS_SPOTLIGHT",	(long)IShader::EType::ATLAS_SPOTLIGHT);
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_UI_BLUR",			(long)IShader::EType::UI_BLUR);
+	PyModule_AddIntConstant(poModule, "SHADER_TYPE_WATER",				(long)IShader::EType::WATER);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
