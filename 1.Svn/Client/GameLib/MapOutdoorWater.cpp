@@ -1,3 +1,6 @@
+//THIS IS AN EXAMPLE
+//YOU DO NOT NEED TO ADD THIS
+
 ///Add
 #if defined(__BL_SHADER__)
 #include "../UserInterface/ShaderManager.h"
