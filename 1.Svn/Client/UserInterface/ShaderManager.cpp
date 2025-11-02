@@ -11,13 +11,6 @@
 #include "../EterPack/EterPackManager.h"
 
 #if defined(__BL_SHADER__)
-
-struct SQuadVertex
-{
-	float x, y, z, rhw;
-	float u, v;
-};
-
 CShaderManager::CShaderManager() :
 	m_ScreenQuad(nullptr),
 	m_RenderTextureA(nullptr),
@@ -35,13 +28,10 @@ CShaderManager::~CShaderManager()
 
 bool CShaderManager::Initialize()
 {
-	if (!CreateTextures())
-		return false;
-	
-	if (!__CreateScreenQuad())
+	if (!__CreateResources())
 		return false;
 
-	if (!__CreateFX())
+	if (!__LoadShaders())
 		return false;
 
 	return true;
@@ -50,18 +40,15 @@ bool CShaderManager::Initialize()
 void CShaderManager::Destroy()
 {
 	stl_wipe_second(m_ShaderMap);
-	safe_release(m_ScreenQuad);
-	ReleaseTextures();
+	__ReleaseResources();
 }
 
-bool CShaderManager::__CreateScreenQuad()
+bool CShaderManager::__CreateResources()
 {
-	if (m_ScreenQuad)
-		return true;
-
+	LPDIRECT3DDEVICE9 device = STATEMANAGER.GetDevice();
 	CPythonApplication& app = CPythonApplication::Instance();
-	const float width = static_cast<float>(app.GetWidth());
-	const float height = static_cast<float>(app.GetHeight());
+	const int width = app.GetWidth();
+	const int height = app.GetHeight();
 
 	SQuadVertex vertices[] =
 	{
@@ -71,23 +58,22 @@ bool CShaderManager::__CreateScreenQuad()
 		{ width - 0.5f, height - 0.5f, 0.5f, 1.0f, 1.0f, 1.0f }
 	};
 
-	LPDIRECT3DDEVICE9 device = STATEMANAGER.GetDevice();
 	if (FAILED(device->CreateVertexBuffer(
 		sizeof(vertices),
 		D3DUSAGE_WRITEONLY,
 		D3DFVF_XYZRHW | D3DFVF_TEX1,
-		D3DPOOL_MANAGED,
+		D3DPOOL_DEFAULT,
 		&m_ScreenQuad,
 		nullptr)))
 	{
-		TraceError("CShaderManager::__CreateScreenQuad CreateVertexBuffer Failed.");
+		TraceError("CShaderManager::__CreateResources CreateVertexBuffer Failed.");
 		return false;
 	}
 
 	void* data;
 	if (FAILED(m_ScreenQuad->Lock(0, 0, &data, 0)))
 	{
-		TraceError("CShaderManager::__CreateScreenQuad Lock Failed.");
+		TraceError("CShaderManager::__CreateResources Lock Failed.");
 		return false;
 	}
 
@@ -95,14 +81,48 @@ bool CShaderManager::__CreateScreenQuad()
 
 	if (FAILED(m_ScreenQuad->Unlock()))
 	{
-		TraceError("CShaderManager::__CreateScreenQuad Unlock Failed.");
+		TraceError("CShaderManager::__CreateResources Unlock Failed.");
+		return false;
+	}
+
+	if (FAILED(device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_RenderTextureA, nullptr)))
+	{
+		TraceError("CShaderManager::__CreateResources m_RenderTextureA: Create Failed.");
+		return false;
+	}
+
+	if (FAILED(m_RenderTextureA->GetSurfaceLevel(0, &m_RenderSurfaceA)))
+	{
+		TraceError("CShaderManager::__CreateResources m_RenderTextureA: Surface Level Failed.");
+		return false;
+	}
+
+	if (FAILED(device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_RenderTextureB, nullptr)))
+	{
+		TraceError("CShaderManager::__CreateResources m_RenderTextureB: Create Failed.");
+		return false;
+	}
+
+	if (FAILED(m_RenderTextureB->GetSurfaceLevel(0, &m_RenderSurfaceB)))
+	{
+		TraceError("CShaderManager::__CreateResources m_RenderTextureB: Surface Level Failed.");
 		return false;
 	}
 
 	return true;
 }
 
-bool CShaderManager::__CreateFX()
+void CShaderManager::__ReleaseResources()
+{
+	safe_release(m_ScreenQuad);
+	safe_release(m_RenderTextureA);
+	safe_release(m_RenderTextureB);
+	safe_release(m_RenderSurfaceA);
+	safe_release(m_RenderSurfaceB);
+	safe_release(m_OriginalRenderTexture);
+}
+
+bool CShaderManager::__LoadShaders()
 {
 	if (!AddFX(IShader::EType::WAVE, "d:/ymir work/shader/wave.fx"))
 		return false;
@@ -122,57 +142,10 @@ bool CShaderManager::__CreateFX()
 	if (!AddFX(IShader::EType::UI_BLUR, "d:/ymir work/shader/ui_blur.fx"))
 		return false;
 
-	/*{
-		IShader* shader = GetShader(IShader::EType::PIXELATE);
-		if (shader)
-			dynamic_cast<CPixelateShader*>(shader)->SetPixelSize(10.0f);
-	}*/
-
 	return true;
 }
 
-bool CShaderManager::CreateTextures()
-{
-	LPDIRECT3DDEVICE9 device = STATEMANAGER.GetDevice();
-	CPythonApplication& app = CPythonApplication::Instance();
-	const int width = app.GetWidth();
-	const int height = app.GetHeight();
-
-	if (FAILED(device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_RenderTextureA, nullptr)))
-	{
-		TraceError("CShaderManager::CreateTextures m_RenderTextureA: Create Failed.");
-		return false;
-	}
-
-	if (FAILED(m_RenderTextureA->GetSurfaceLevel(0, &m_RenderSurfaceA)))
-	{
-		TraceError("CShaderManager::CreateTextures m_RenderTextureA: Surface Level Failed.");
-		return false;
-	}
-
-	if (FAILED(device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_RenderTextureB, nullptr)))
-	{
-		TraceError("CShaderManager::CreateTextures m_RenderTextureB: Create Failed.");
-		return false;
-	}
-
-	if (FAILED(m_RenderTextureB->GetSurfaceLevel(0, &m_RenderSurfaceB)))
-	{
-		TraceError("CShaderManager::CreateTextures m_RenderTextureB: Surface Level Failed.");
-		return false;
-	}
-
-	for (const auto& elem : m_ShaderMap)
-	{
-		IShader* shader = elem.second;
-		if (shader)
-			shader->ResetDevice();
-	}
-
-	return true;
-}
-
-void CShaderManager::ReleaseTextures()
+void CShaderManager::LostDevice()
 {
 	for (const auto& elem : m_ShaderMap)
 	{
@@ -180,12 +153,20 @@ void CShaderManager::ReleaseTextures()
 		if (shader)
 			shader->LostDevice();
 	}
+
+	__ReleaseResources();
+}
+
+void CShaderManager::RestoreDevice()
+{
+	__CreateResources();
 	
-	safe_release(m_RenderTextureA);
-	safe_release(m_RenderTextureB);
-	safe_release(m_RenderSurfaceA);
-	safe_release(m_RenderSurfaceB);
-	safe_release(m_OriginalRenderTexture);
+	for (const auto& elem : m_ShaderMap)
+	{
+		IShader* shader = elem.second;
+		if (shader)
+			shader->ResetDevice();
+	}
 }
 
 void CShaderManager::Begin()
@@ -206,8 +187,8 @@ void CShaderManager::End(IShader::ERenderType renderType)
 	STATEMANAGER.SaveRenderState(D3DRS_ZENABLE, FALSE);
 	STATEMANAGER.SaveRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-	DWORD state_COLORARG1;
-	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &state_COLORARG1);
+	DWORD stateColorArg1;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &stateColorArg1);
 
 	STATEMANAGER.SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	STATEMANAGER.SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
@@ -245,7 +226,7 @@ void CShaderManager::End(IShader::ERenderType renderType)
 
 	STATEMANAGER.RestoreRenderState(D3DRS_ZENABLE);
 	STATEMANAGER.RestoreRenderState(D3DRS_ZWRITEENABLE);
-	STATEMANAGER.SetTextureStageState(0, D3DTSS_COLORARG1, state_COLORARG1);
+	STATEMANAGER.SetTextureStageState(0, D3DTSS_COLORARG1, stateColorArg1);
 }
 
 bool CShaderManager::AddFX(IShader::EType type, const char* path)

@@ -43,8 +43,8 @@ public:
 	void LostDevice() const;
 	void ResetDevice() const;
 
-	void Show() { m_Visible = true; }
-	void Hide() { m_Visible = false; }
+	virtual void Show() { m_Visible = true; }
+	virtual void Hide() { m_Visible = false; }
 
 	ID3DXEffect* GetEffect() const { return m_Effect; }
 	bool IsVisible() const { return m_Visible; }
@@ -164,8 +164,8 @@ public:
 	bool Initialize();
 	void Destroy();
 
-	bool CreateTextures();
-	void ReleaseTextures();
+	void LostDevice();
+	void RestoreDevice();
 
 	void Begin();
 	void End(IShader::ERenderType renderType);
@@ -174,10 +174,17 @@ public:
 	IShader* GetShader(IShader::EType type) const;
 
 private:
-	bool __CreateScreenQuad();
-	bool __CreateFX();
+	bool __CreateResources();
+	void __ReleaseResources();
+	bool __LoadShaders();
 
 private:
+	struct SQuadVertex
+	{
+		float x, y, z, rhw;
+		float u, v;
+	};
+	
 	LPDIRECT3DVERTEXBUFFER9 m_ScreenQuad;
 
 	LPDIRECT3DTEXTURE9 m_RenderTextureA;

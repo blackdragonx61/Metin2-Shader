@@ -28,7 +28,7 @@
 
 ///Add
 #if defined(__BL_SHADER__)
-				m_ShaderManager.ReleaseTextures();
+				m_ShaderManager.LostDevice();
 #endif
 
 //Find
@@ -36,7 +36,7 @@
 
 ///Add
 #if defined(__BL_SHADER__)
-					m_ShaderManager.CreateTextures();
+					m_ShaderManager.RestoreDevice();
 #endif
 
 //Find
