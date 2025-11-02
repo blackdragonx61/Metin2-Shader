@@ -34,7 +34,7 @@ public:
 	explicit IShader();
 	virtual ~IShader();
 
-	virtual void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const = 0;
+	virtual void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const = 0;
 	virtual EType GetType() const = 0;
 	virtual ERenderType GetRenderType() const = 0;
 
@@ -59,7 +59,7 @@ class CWaveShader : public IShader
 public:
 	CWaveShader();
 
-	void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const override;
+	void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const override;
 	EType GetType() const override { return EType::WAVE; }
 	ERenderType GetRenderType() const override { return ERenderType::GAME_SCREEN; }
 
@@ -76,7 +76,7 @@ class CGrayShader : public IShader
 public:
 	CGrayShader();
 
-	void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const override;
+	void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const override;
 	EType GetType() const override { return EType::GRAY; }
 	ERenderType GetRenderType() const override { return ERenderType::GAME_SCREEN; }
 
@@ -95,7 +95,7 @@ class CPixelateShader : public IShader
 public:
 	CPixelateShader();
 
-	void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const override;
+	void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const override;
 	EType GetType() const override { return EType::PIXELATE; }
 	ERenderType GetRenderType() const override { return ERenderType::GAME_SCREEN; }
 
@@ -110,7 +110,7 @@ class CInvertColorShader : public IShader
 public:
 	CInvertColorShader();
 
-	void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const override;
+	void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const override;
 	EType GetType() const override { return EType::INVERT; }
 	ERenderType GetRenderType() const override { return ERenderType::OTHER; }
 };
@@ -120,7 +120,7 @@ class CAtlasSpotlightShader : public IShader
 public:
 	CAtlasSpotlightShader();
 
-	void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const override;
+	void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const override;
 	EType GetType() const override { return EType::ATLAS_SPOTLIGHT; }
 	ERenderType GetRenderType() const override { return ERenderType::ATLAS; }
 
@@ -145,7 +145,7 @@ class CUIBlurShader : public IShader
 public:
 	CUIBlurShader();
 
-	void ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const override;
+	void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const override;
 	EType GetType() const override { return EType::UI_BLUR; }
 	ERenderType GetRenderType() const override { return ERenderType::UI; }
 

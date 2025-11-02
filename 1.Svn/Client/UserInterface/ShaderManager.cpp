@@ -458,7 +458,7 @@ CWaveShader::CWaveShader() :
 {
 }
 
-void CWaveShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
+void CWaveShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
 {
 	if (!m_Effect)
 		return;
@@ -480,7 +480,7 @@ CGrayShader::CGrayShader() :
 {
 }
 
-void CGrayShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
+void CGrayShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
 {
 	if (!m_Effect)
 		return;
@@ -500,7 +500,7 @@ CPixelateShader::CPixelateShader() :
 {
 }
 
-void CPixelateShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
+void CPixelateShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
 {
 	if (!m_Effect)
 		return;
@@ -519,7 +519,7 @@ void CPixelateShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
 
 CInvertColorShader::CInvertColorShader() = default;
 
-void CInvertColorShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
+void CInvertColorShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
 {
 	if (!m_Effect)
 		return;
@@ -540,7 +540,7 @@ CAtlasSpotlightShader::CAtlasSpotlightShader() :
 {
 }
 
-void CAtlasSpotlightShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
+void CAtlasSpotlightShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
 {
 	if (!m_Effect)
 		return;
@@ -576,7 +576,7 @@ CUIBlurShader::CUIBlurShader() :
 {
 }
 
-void CUIBlurShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
+void CUIBlurShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
 {
 	if (!m_Effect)
 		return;
