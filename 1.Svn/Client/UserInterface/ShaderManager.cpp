@@ -525,12 +525,11 @@ void CPixelateShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
 		return;
 
 	CPythonApplication& app = CPythonApplication::Instance();
-	const int width = app.GetWidth();
-	const int height = app.GetHeight();
+	const D3DXVECTOR2 screenSize{ (FLOAT)app.GetWidth(), (FLOAT)app.GetHeight() };
 
 	m_Effect->SetTexture("SceneTex", inputTexture);
 	m_Effect->SetFloat("PixelSize", m_PixelSize);
-	m_Effect->SetVector("ScreenSize", &D3DXVECTOR4((float)width, (float)height, 0, 0));
+	m_Effect->SetValue("ScreenSize", &screenSize, sizeof(D3DXVECTOR2));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -566,11 +565,10 @@ void CAtlasSpotlightShader::ApplySettings(LPDIRECT3DTEXTURE9 inputTexture) const
 		return;
 
 	CPythonApplication& app = CPythonApplication::Instance();
-	const int width = app.GetWidth();
-	const int height = app.GetHeight();
+	const D3DXVECTOR2 screenSize{ (FLOAT)app.GetWidth(), (FLOAT)app.GetHeight() };
 
 	m_Effect->SetTexture("SceneTex", inputTexture);
-	m_Effect->SetVector("ScreenSize", &D3DXVECTOR4((float)width, (float)height, 0, 0));
+	m_Effect->SetValue("ScreenSize", &screenSize, sizeof(D3DXVECTOR2));
 	m_Effect->SetValue("TextureSize", &m_TextureSize, sizeof(D3DXVECTOR2));
 
 	for (int i = 0; i < m_Points.size(); ++i)
