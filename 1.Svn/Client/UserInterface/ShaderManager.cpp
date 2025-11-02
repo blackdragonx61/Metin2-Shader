@@ -142,6 +142,9 @@ bool CShaderManager::__LoadShaders()
 	if (!AddFX(IShader::EType::UI_BLUR, "d:/ymir work/shader/ui_blur.fx"))
 		return false;
 
+	if (!AddFX(IShader::EType::WATER, "d:/ymir work/shader/water.fx"))
+		return false;
+
 	return true;
 }
 
@@ -258,6 +261,9 @@ bool CShaderManager::AddFX(IShader::EType type, const char* path)
 		break;
 	case IShader::EType::UI_BLUR:
 		shader = new CUIBlurShader;
+		break;
+	case IShader::EType::WATER:
+		shader = new CWaterShader;
 		break;
 	default:
 		TraceError("CShaderManager::AddFX Unknown Shader Type: %d", type);
@@ -585,4 +591,22 @@ void CUIBlurShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
 	m_Effect->SetFloat("BlurStrength", m_BlurStrength);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+CWaterShader::CWaterShader() :
+	m_Speed(0.2f)
+{
+}
+
+void CWaterShader::ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const
+{
+	if (!m_Effect)
+		return;
+
+	m_Effect->SetTexture("SceneTex", inputTexture);
+	m_Effect->SetFloat("speed", m_Speed);
+	m_Effect->SetFloat("time", CTimer::Instance().GetCurrentSecond());
+}
 #endif // __BL_SHADER__

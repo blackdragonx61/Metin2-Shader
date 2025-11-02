@@ -21,6 +21,7 @@ public:
 		INVERT,
 		ATLAS_SPOTLIGHT,
 		UI_BLUR,
+		WATER,
 	};
 
 	enum class ERenderType
@@ -153,6 +154,21 @@ public:
 
 protected:
 	float m_BlurStrength;
+};
+
+class CWaterShader : public IShader
+{
+public:
+	CWaterShader();
+
+	void ApplySettings(LPDIRECT3DBASETEXTURE9 inputTexture) const override;
+	EType GetType() const override { return EType::WATER; }
+	ERenderType GetRenderType() const override { return ERenderType::OTHER; }
+
+	void SetSpeed(float f) { m_Speed = f; }
+
+protected:
+	float m_Speed;
 };
 
 class CShaderManager : public CSingleton<CShaderManager>
