@@ -3,6 +3,9 @@
 # __BL_SHADER__
 # 30.10.2025
 
+#THIS IS AN EXAMPLE
+#YOU DO NOT NEED TO ADD THIS
+
 import ui
 import shaderMgr
 
@@ -18,7 +21,7 @@ class BLACKSUBWINDOW(ui.ThinBoardCircle):
 		shaderMgr.Begin()
 	
 	def OnRenderEnd(self):
-		shaderMgr.End()
+		shaderMgr.End(shaderMgr.SHADER_RENDER_TYPE_UI)
 	
 	def SetBlurShaderState(self, is_show):
 		if is_show:

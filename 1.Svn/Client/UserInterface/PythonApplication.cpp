@@ -1,28 +1,3 @@
-//Find in void CPythonApplication::RenderGame()
-	if (!PERF_CHECKER_RENDER_GAME)
-	{
-
-///Add
-#if defined(__BL_SHADER__)
-		m_ShaderManager.Begin();
-#endif
-
-//Find
-		m_pyBackground.RenderAfterLensFlare();
-		
-		return;
-	}
-
-///Change
-		m_pyBackground.RenderAfterLensFlare();
-
-#if defined(__BL_SHADER__)
-		m_ShaderManager.End(IShader::ERenderType::GAME_SCREEN);
-#endif
-
-		return;
-	}
-
 //Find
 				rkBG.ReleaseCharacterShadowTexture();
 

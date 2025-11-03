@@ -301,7 +301,11 @@ PyObject* shaderMgrBegin(PyObject* poSelf, PyObject* poArgs)
 
 PyObject* shaderMgrEnd(PyObject* poSelf, PyObject* poArgs)
 {
-	CShaderManager::Instance().End(IShader::ERenderType::UI);
+	int iShaderRenderTypeIndex;
+	if (!PyTuple_GetInteger(poArgs, 0, &iShaderRenderTypeIndex))
+		return Py_BuildException();
+	
+	CShaderManager::Instance().End(static_cast<IShader::ERenderType>(iShaderRenderTypeIndex));
 	return Py_BuildNone();
 }
 
@@ -352,6 +356,7 @@ void initshadermgr()
 	};
 
 	PyObject* poModule = Py_InitModule("shaderMgr", s_methods);
+
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_WAVE",				(long)IShader::EType::WAVE);
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_GRAY",				(long)IShader::EType::GRAY);
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_PIXELATE",			(long)IShader::EType::PIXELATE);
@@ -359,6 +364,11 @@ void initshadermgr()
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_ATLAS_SPOTLIGHT",	(long)IShader::EType::ATLAS_SPOTLIGHT);
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_UI_BLUR",			(long)IShader::EType::UI_BLUR);
 	PyModule_AddIntConstant(poModule, "SHADER_TYPE_WATER",				(long)IShader::EType::WATER);
+
+	PyModule_AddIntConstant(poModule, "SHADER_RENDER_TYPE_GAME_SCREEN", (long)IShader::ERenderType::GAME_SCREEN);
+	PyModule_AddIntConstant(poModule, "SHADER_RENDER_TYPE_ATLAS",		(long)IShader::ERenderType::ATLAS);
+	PyModule_AddIntConstant(poModule, "SHADER_RENDER_TYPE_UI",			(long)IShader::ERenderType::UI);
+	PyModule_AddIntConstant(poModule, "SHADER_RENDER_TYPE_OTHER",		(long)IShader::ERenderType::OTHER);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
